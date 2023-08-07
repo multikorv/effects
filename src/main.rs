@@ -4,8 +4,28 @@ use std::sync::Arc;
 
 use vulkano::{
     VulkanLibrary,
-    instance::{Instance, InstanceCreateInfo},
-    device::{Device, DeviceCreateInfo, QueueCreateInfo, QueueFlags, DeviceExtensions, physical::{PhysicalDevice, PhysicalDeviceType}}, swapchain::{Swapchain, SwapchainCreateInfo}, image::ImageUsage, buffer::BufferContents
+    instance::{
+        Instance,
+        InstanceCreateInfo
+    },
+    device::{
+        Device,
+        DeviceCreateInfo,
+        QueueCreateInfo,
+        QueueFlags,
+        DeviceExtensions,
+        physical::{
+            PhysicalDevice,
+            PhysicalDeviceType
+        }, Queue
+    },
+    swapchain::{
+        Swapchain,
+        SwapchainCreateInfo, self, SwapchainPresentInfo,
+    },
+    image::{ImageUsage, SwapchainImage, view::ImageView},
+    buffer::BufferContents, render_pass::{RenderPass, Framebuffer, Subpass}, single_pass_renderpass, shader::ShaderModule, pipeline::{graphics::{viewport::{Viewport, ViewportState}, vertex_input::{BuffersDefinition, Vertex, VertexBufferDescription}, input_assembly::InputAssemblyState}, GraphicsPipeline}, command_buffer::{PrimaryAutoCommandBuffer, AutoCommandBufferBuilder, CommandBufferUsage, RenderPassBeginInfo, SubpassContents}
+
 };
 use vulkano_win::VkSurfaceBuild;
 use winit::{
@@ -66,8 +86,6 @@ fn main() {
         .surface_capabilities(&surface, Default::default())
         .expect("Failed to get surface capabilities");
 
-    //surface.window();
-
     let composite_alpha = caps.supported_composite_alpha.into_iter().next().unwrap();
 
     let image_format = Some(
@@ -103,8 +121,9 @@ fn main() {
     });
 }
 
+
 fn select_physical_device(instance: &Arc<Instance>, surface: &Arc<vulkano::swapchain::Surface>, device_extensions: &DeviceExtensions) -> (Arc<PhysicalDevice>, u32) {
-    return instance
+    instance
         .enumerate_physical_devices()
         .expect("Could not enumerate devices")
         .filter(|p| {
@@ -128,7 +147,61 @@ fn select_physical_device(instance: &Arc<Instance>, surface: &Arc<vulkano::swapc
                 _ => 4,
             }
         })
-        .expect("No devices available");
+        .expect("No devices available")
+}
+
+fn get_render_pass(device: Arc<Device>, swapchain: &Arc<Swapchain>) -> Arc<RenderPass> {
+    vulkano::single_pass_renderpass!(
+        device,
+        attachments: {
+            color: {
+                load: Clear,
+                store: Store,
+                format: swapchain.image_format(),
+                samples: 1
+            },
+        },
+        pass: {
+            color: [color],
+            depth_stencil: {},
+        },
+    )
+    .unwrap()
+}
+
+fn get_framebuffers(images: &[Arc<SwapchainImage>], render_pass: &Arc<RenderPass>) -> Vec<Arc<Framebuffer>> {
+    images
+        .iter()
+        .map(|image| {
+            let view = ImageView::new_default(image.clone()).unwrap();
+            Framebuffer::new(
+                render_pass.clone(),
+                vulkano::render_pass::FramebufferCreateInfo {
+                    attachments: vec![view],
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+        })
+        .collect::<Vec<_>>()
+}
+
+fn get_pipeline(
+    device: Arc<Device>,
+    vs: Arc<ShaderModule>,
+    fs: Arc<ShaderModule>,
+    render_pass: Arc<RenderPass>,
+    viewport: Viewport,
+) -> Arc<GraphicsPipeline> {
+    GraphicsPipeline::start()
+        .vertex_input_state(BuffersDefinition::new())
+        .vertex_shader(vs.entry_point("main").unwrap(), ())
+        .input_assembly_state(InputAssemblyState::new())
+        .viewport_state(ViewportState::viewport_fixed_scissor_irrelevant([viewport]))
+        .fragment_shader(fs.entry_point("main").unwrap(), ())
+        .render_pass(Subpass::from(render_pass, 0).unwrap())
+        .build(device)
+        .unwrap()
 }
 
 #[derive(BufferContents)]
