@@ -55,7 +55,7 @@ fn main() {
                     let green = y % 255;
                     let blue = x + y % 255;
 
-                    buffer[index as usize] = Color::new(red, green, blue).as_pixel();
+                    buffer[index as usize] = Color::new(red, green, blue).into();
                 }
 
                 buffer.present().expect("Failed to present surface buffer");
@@ -85,5 +85,11 @@ impl Color {
     /// pixel format as defined by Buffer in softbuffer
     pub fn as_pixel(self) -> u32 {
         self.blue | self.green << 8 | self.red << 16
+    }
+}
+
+impl From<Color> for u32 {
+    fn from(color: Color) -> Self {
+        color.blue | color.green << 8 | color.red << 16
     }
 }
