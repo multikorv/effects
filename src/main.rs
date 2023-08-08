@@ -1,5 +1,14 @@
+use std::num::NonZeroU32;
+
+use softbuffer::{
+    Context,
+    Surface
+};
 use winit::{
-    window::WindowBuilder,
+    window::{
+        WindowBuilder,
+        Window
+    },
     event_loop::{
         EventLoop,
         ControlFlow
@@ -11,16 +20,50 @@ use winit::{
 };
 
 fn main() {
+    let event_loop: EventLoop<()> = EventLoop::new();
 
-    let event_loop = EventLoop::new();
-
-    let window = WindowBuilder::new()
+    let window: Window = WindowBuilder::new()
         .build(&event_loop)
         .unwrap();
 
-    event_loop.run(|event, _, control_flow| {
+    let context: Context = unsafe { softbuffer::Context::new(&window) }.unwrap();
+    let mut surface: Surface = unsafe { softbuffer::Surface::new(&context, &window).unwrap() };
+
+    event_loop.run(move |event, _, control_flow| {
         match event {
-            Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => {
+            Event::RedrawRequested(window_id) if window_id == window.id() => {
+                let (width, height) = {
+                    let size = window.inner_size();
+                    (size.width, size.height)
+                };
+
+                surface.resize(
+                    NonZeroU32::new(width).unwrap(),
+                    NonZeroU32::new(height).unwrap()
+                )
+                .unwrap();
+
+                let mut buffer = surface
+                    .buffer_mut()
+                    .expect("Could not get mutable surface buffer");
+
+                for index in 0..(width * height) {
+                    let x = index % width;
+                    let y = index / width;
+
+                    let red = x % 255;
+                    let green = y % 255;
+                    let blue = x + y % 255;
+
+                    buffer[index as usize] = blue | green << 8 | red << 16;
+                }
+
+                buffer.present().expect("Failed to present surface buffer");
+            }
+            Event::WindowEvent {
+                event: WindowEvent::CloseRequested,
+                window_id
+            } if window_id == window.id() => {
                 *control_flow = ControlFlow::Exit
             },
             _ => ()
