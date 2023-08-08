@@ -2,7 +2,7 @@ use std::num::NonZeroU32;
 
 use softbuffer::{
     Context,
-    Surface
+    Surface, Buffer
 };
 use winit::{
     window::{
@@ -43,7 +43,7 @@ fn main() {
                 )
                 .unwrap();
 
-                let mut buffer = surface
+                let mut buffer : Buffer <'_> = surface
                     .buffer_mut()
                     .expect("Could not get mutable surface buffer");
 
@@ -55,7 +55,7 @@ fn main() {
                     let green = y % 255;
                     let blue = x + y % 255;
 
-                    buffer[index as usize] = blue | green << 8 | red << 16;
+                    buffer[index as usize] = Color::new(red, green, blue).as_pixel();
                 }
 
                 buffer.present().expect("Failed to present surface buffer");
@@ -69,4 +69,21 @@ fn main() {
             _ => ()
         }
     });
+}
+
+pub struct Color {
+    red: u32,
+    green: u32,
+    blue: u32
+}
+
+impl Color {
+    pub fn new(red:u32, green:u32, blue:u32) -> Color {
+        Color { red, green, blue }
+    }
+
+    /// pixel format as defined by Buffer in softbuffer
+    pub fn as_pixel(self) -> u32 {
+        self.blue | self.green << 8 | self.red << 16
+    }
 }
