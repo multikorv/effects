@@ -1,5 +1,8 @@
+mod color;
+
 use std::num::NonZeroU32;
 
+use color::Color;
 use softbuffer::{
     Context,
     Surface, Buffer
@@ -69,27 +72,4 @@ fn main() {
             _ => ()
         }
     });
-}
-
-pub struct Color {
-    red: u32,
-    green: u32,
-    blue: u32
-}
-
-impl Color {
-    pub fn new(red:u32, green:u32, blue:u32) -> Color {
-        Color { red, green, blue }
-    }
-
-    /// pixel format as defined by Buffer in softbuffer
-    pub fn as_pixel(self) -> u32 {
-        self.blue | self.green << 8 | self.red << 16
-    }
-}
-
-impl From<Color> for u32 {
-    fn from(color: Color) -> Self {
-        color.blue | color.green << 8 | color.red << 16
-    }
 }
