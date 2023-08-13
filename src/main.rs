@@ -1,7 +1,6 @@
-mod color;
-mod metaball_drawer;
+mod metaball;
 
-use metaball_drawer::Drawer;
+use metaball::drawer::Drawer;
 use softbuffer::{
     Context,
     Surface,
@@ -30,7 +29,7 @@ fn main() {
         .unwrap();
 
     let context: Context = unsafe { softbuffer::Context::new(&window) }.unwrap();
-    let mut surface: Surface = unsafe { softbuffer::Surface::new(&context, &window).unwrap() };
+    let surface: Surface = unsafe { softbuffer::Surface::new(&context, &window).unwrap() };
     let mut drawer = Drawer::new(surface);
 
     event_loop.run(move |event, _, control_flow| {

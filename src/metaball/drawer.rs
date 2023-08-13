@@ -1,8 +1,7 @@
+use crate::metaball::color::Color;
+
 use std::num::NonZeroU32;
-
 use softbuffer::Surface;
-
-use crate::color::Color;
 
 pub struct Drawer {
     surface: Surface,
@@ -42,10 +41,10 @@ impl Drawer {
     }
 
     pub fn present(&mut self) {
-        let mut buffer = self.surface
+        let buffer = self.surface
             .buffer_mut()
             .expect("Could not get mutable surface buffer");
-        buffer.present();
+        buffer.present().expect("Failed to presest buffer");
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
