@@ -3,7 +3,7 @@ mod tests;
 
 use std::ops::Sub;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Vec3 {
     pub x: i32,
     pub y: i32,
