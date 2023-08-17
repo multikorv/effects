@@ -10,7 +10,6 @@ pub struct Drawer {
 }
 
 // Should probably split into something threaded or yield to a certain frame count
-// TODO: Investigate if i can avoid static in this module
 impl Drawer {
     pub fn new(surface: Surface) -> Drawer {
         Drawer{
@@ -20,24 +19,9 @@ impl Drawer {
         }
     }
 
-    // TODO: Fix width and height set, should be set elsewhere
     pub fn write(&mut self) {
-
-        for index in 0..(self.width * self.height) {
-            // TODO: Add actual meta ball rendering
-            let x = index %  self.width;
-            let y = index / self.width;
-
-            let red = x % 255;
-            let green = y % 255;
-            let blue = x + y % 255;
-
-            let mut buffer = self.surface
-                .buffer_mut()
-                .expect("Could not get mutable surface buffer");
-
-            buffer[index as usize] = Color::new(red, green, blue).into();
-        }
+        // TODO: Add actual meta ball rendering
+        self.debug_write();
     }
 
     pub fn present(&mut self) {
@@ -55,6 +39,30 @@ impl Drawer {
             NonZeroU32::new(width).unwrap(),
             NonZeroU32::new(height).unwrap()
         )
-        .unwrap();
+        .expect("Could not resize surface");
     }
+
+    fn debug_write(&mut self)
+    {
+        let mut buffer = self.surface
+            .buffer_mut()
+            .expect("Could not get mutable surface buffer");
+
+        for index in 0..(self.width * self.height) {
+            let x = index %  self.width;
+            let y = index / self.width;
+
+            buffer[index as usize] = Drawer::debug_color_for(x, y).into();
+        }
+    }
+
+    fn debug_color_for(x: u32, y: u32) -> Color
+    {
+        let red = x % 255;
+        let green = y % 255;
+        let blue = x + y % 255;
+
+        Color::new(red, green, blue)
+    }
+
 }
