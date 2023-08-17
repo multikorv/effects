@@ -1,7 +1,4 @@
-use crate::metaball::{
-    vec3::Vec3,
-    color::Color
-};
+use crate::common::{vector::Vec3, color::Color};
 
 #[derive(Debug)]
 pub struct Ball {

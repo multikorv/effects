@@ -1,6 +1,7 @@
 mod metaball;
+mod common;
 
-use metaball::drawer::Drawer;
+use common::drawer::Drawer;
 use softbuffer::{
     Context,
     Surface,

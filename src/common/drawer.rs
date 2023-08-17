@@ -1,4 +1,6 @@
-use crate::metaball::color::Color;
+use crate::common::color::Color;
+use crate::metaball::ball::Ball;
+use crate::common::vector::Vec3;
 
 use std::num::NonZeroU32;
 use softbuffer::Surface;
@@ -42,23 +44,24 @@ impl Drawer {
         .expect("Could not resize surface");
     }
 
-    fn metaballs_write(&mut self) {
+    fn write_color(&mut self, x: u32, y: u32, color: &Color)
+    {
+        let index = y * self.width + x;
+
         let mut buffer = self.surface
             .buffer_mut()
             .expect("Could not get mutable surface buffer");
+
+        buffer[index as usize] = color.into();
     }
 
     fn debug_write(&mut self)
     {
-        let mut buffer = self.surface
-            .buffer_mut()
-            .expect("Could not get mutable surface buffer");
-
         for index in 0..(self.width * self.height) {
-            let x = index %  self.width;
+            let x = index % self.width;
             let y = index / self.width;
 
-            buffer[index as usize] = Drawer::debug_color_for(x, y).into();
+            self.write_color(x, y, &Drawer::debug_color_for(x, y));
         }
     }
 
