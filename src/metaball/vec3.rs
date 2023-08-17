@@ -16,6 +16,7 @@ impl Vec3 {
     }
 }
 
+// TODO: Finish basic arithmetics
 impl Sub for Vec3 {
     type Output = Self;
 

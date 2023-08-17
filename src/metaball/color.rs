@@ -17,6 +17,16 @@ impl From<Color> for u32 {
     }
 }
 
+impl Default for Color {
+    fn default() -> Self {
+        Self {
+            red: 255,
+            green: Default::default(),
+            blue: Default::default()
+        }
+    }
+}
+
 const WHITE: Color = Color {
     red:255,
     green: 255,
