@@ -1,14 +1,14 @@
-use crate::common::{vector::Vec3, color::Color};
+use crate::common::{vector::Vec2, color::Color};
 
 #[derive(Debug)]
 pub struct Ball {
-    pub position: Vec3,
+    pub position: Vec2,
     pub radius: u32,
     pub color: Color
 }
 
 impl Ball {
-    pub fn new (position: Vec3, radius: u32, color: Color) -> Ball {
+    pub fn new (position: Vec2, radius: u32, color: Color) -> Ball {
         Ball {
             position,
             radius,

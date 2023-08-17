@@ -1,6 +1,6 @@
 use crate::common::color::Color;
 use crate::metaball::ball::Ball;
-use crate::common::vector::Vec3;
+use crate::common::vector::{Vec2, self};
 
 use std::num::NonZeroU32;
 use softbuffer::Surface;
@@ -47,46 +47,64 @@ impl Renderer {
 
     // TODO: Messy casting, read up on and/or fix with assumptions
     fn metaballs_write(&mut self) {
+        let width:f64 = self.width.into();
+        let height:f64 = self.height.into();
         let ball: Ball = Ball::new (
-            Vec3::new((self.width/2) as i32, (self.height/2) as i32, 0),
-            100,
+            Vec2::new(width/2.0, height/2.0),
+            200,
             Default::default()
         );
 
-        let mut t1: i32 = ball.radius as i32;
-        let mut x: i32 = ball.radius as i32;
-        let mut y: i32 = 0;
+        let mut t1: f64 = (ball.radius) as f64;
+        let mut x: f64 = ball.radius as f64;
+        let mut y: f64 = 0.0;
 
+        const SECTOR_INTERVAL_SIZE: i32 = 5;
+        let mut sector_render_counter = 0;
         while x >= y {
-            for pixel in Renderer::get_mirror_points_for_octant(&Vec3::new(x, y, 0)) {
-                self.write_color(
-                    (pixel.x + ball.position.x) as u32,
-                    (pixel.y + ball.position.y) as u32,
-                    &ball.color
-              );
+            // Emulate a dotted circle
+            if sector_render_counter % SECTOR_INTERVAL_SIZE == 0 {
+                for pixel in Renderer::get_mirror_points_for_octant(&Vec2::new(x, y)) {
+                    const INCREMENT: f64 = 2.0;
+                    let mut trace_offset: f64 = 0.0;
+
+                    while trace_offset <= ball.radius.into() {
+                        let nearness_to_circle_edge = trace_offset/(ball.radius as f64);
+                        let interpolated = vector::lerp(&(&pixel + &ball.position), &ball.position, nearness_to_circle_edge);
+                        self.write_color(
+                            interpolated.x.round() as u32,
+                            interpolated.y.round() as u32,
+                            &ball.color
+                        );
+
+                        trace_offset += INCREMENT
+                    }
+                }
             }
 
-            y += 1;
+            sector_render_counter += 1;
+
+            y += 1.0;
             t1 += y;
-            let t2: i32 = t1 - x;
-            if t2 >= 0 {
+            let t2: f64 = t1 - x;
+            if t2 >= 0.0 {
                 t1 = t2;
-                x -= 1;
+                x -= 1.0;
             }
         }
     }
 
-    fn get_mirror_points_for_octant(point: &Vec3) -> Vec<Vec3> {
+    fn get_mirror_points_for_octant(point: &Vec2) -> Vec<Vec2> {
         // TODO: Since size is known here, replace with standard array maybe?
         let mirror_points = vec![
-            Vec3::new(point.x, point.y, 0),
-            Vec3::new(point.x, -point.y, 0),
-            Vec3::new(-point.x, point.y, 0),
-            Vec3::new(-point.x, -point.y, 0),
-            Vec3::new(point.y, point.x, 0),
-            Vec3::new(point.y, -point.x, 0),
-            Vec3::new(-point.y, point.x, 0),
-            Vec3::new(-point.y, -point.x, 0)
+            Vec2::new(point.x, point.y),
+            Vec2::new(point.x, -point.y),
+            Vec2::new(-point.x, point.y),
+            Vec2::new(-point.x, -point.y),
+            Vec2::new(point.y, point.x),
+            Vec2::new(point.y, -point.x),
+            Vec2::new(-point.y, point.x),
+            Vec2::new(-point.y, -point.x)
         ];
         mirror_points
     }
