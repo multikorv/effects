@@ -1,7 +1,9 @@
 mod metaball;
 mod common;
+mod rendering;
 
-use common::drawer::Drawer;
+use rendering::renderer::Renderer;
+
 use softbuffer::{
     Context,
     Surface,
@@ -31,7 +33,7 @@ fn main() {
 
     let context: Context = unsafe { softbuffer::Context::new(&window) }.unwrap();
     let surface: Surface = unsafe { softbuffer::Surface::new(&context, &window).unwrap() };
-    let mut drawer = Drawer::new(surface);
+    let mut renderer = Renderer::new(surface);
 
     event_loop.run(move |event, _, control_flow| {
         match event {
@@ -41,9 +43,9 @@ fn main() {
                     (size.width, size.height)
                 };
 
-                drawer.resize(width, height);
-                drawer.write();
-                drawer.present();
+                renderer.resize(width, height);
+                renderer.write();
+                renderer.present();
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
