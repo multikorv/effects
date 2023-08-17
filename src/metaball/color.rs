@@ -1,19 +1,19 @@
 #[derive(Debug)]
 pub struct Color {
-    red: u32,
-    green: u32,
-    blue: u32
+    red: u8,
+    green: u8,
+    blue: u8
 }
 
 impl Color {
-    pub fn new(red:u32, green:u32, blue:u32) -> Color {
+    pub fn new(red: u8, green: u8, blue: u8) -> Color {
         Color { red, green, blue }
     }
 }
 
 impl From<Color> for u32 {
     fn from(color: Color) -> Self {
-        color.blue | color.green << 8 | color.red << 16
+        (color.blue as u32) | (color.green as u32) << 8 | (color.red as u32) << 16
     }
 }
 

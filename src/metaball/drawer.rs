@@ -42,6 +42,12 @@ impl Drawer {
         .expect("Could not resize surface");
     }
 
+    fn metaballs_write(&mut self) {
+        let mut buffer = self.surface
+            .buffer_mut()
+            .expect("Could not get mutable surface buffer");
+    }
+
     fn debug_write(&mut self)
     {
         let mut buffer = self.surface
@@ -58,9 +64,9 @@ impl Drawer {
 
     fn debug_color_for(x: u32, y: u32) -> Color
     {
-        let red = x % 255;
-        let green = y % 255;
-        let blue = x + y % 255;
+        let red: u8 = (x % 255) as u8;
+        let green = (y % 255) as u8;
+        let blue = (x + y % 255) as u8;
 
         Color::new(red, green, blue)
     }
