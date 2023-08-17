@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Color {
     red: u32,
     green: u32,
