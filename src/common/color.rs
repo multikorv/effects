@@ -33,31 +33,31 @@ impl Default for Color {
     }
 }
 
-const WHITE: Color = Color {
+pub const WHITE: Color = Color {
     red:255,
     green: 255,
     blue: 255
 };
 
-const BLACK: Color = Color {
+pub const BLACK: Color = Color {
     red:0,
     green: 0,
     blue: 0
 };
 
-const RED: Color = Color {
+pub const RED: Color = Color {
     red:255,
     green: 0,
     blue: 0
 };
 
-const GREEN: Color = Color {
+pub const GREEN: Color = Color {
     red: 0,
     green: 255,
     blue: 0
 };
 
-const BLUE: Color = Color {
+pub const BLUE: Color = Color {
     red:0,
     green: 0,
     blue: 255
