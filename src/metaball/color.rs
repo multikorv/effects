@@ -17,6 +17,12 @@ impl From<Color> for u32 {
     }
 }
 
+impl From<&Color> for u32 {
+    fn from(val: &Color) -> Self {
+        (val.blue as u32) | (val.green as u32) << 8 | (val.red as u32) << 16
+    }
+}
+
 impl Default for Color {
     fn default() -> Self {
         Self {
