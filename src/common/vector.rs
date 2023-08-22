@@ -3,7 +3,7 @@ mod tests;
 
 use std::ops::{Sub, Add, Mul};
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Vec2 {
     pub x: f64,
     pub y: f64,
