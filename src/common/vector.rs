@@ -15,9 +15,22 @@ impl Vec2 {
     }
 }
 
-// TODO: Finish basic arithmetics
+// TODO: Investigate this.
+// Do I have to duplicate simple arithmetics if the instance is borrowed?
+// In turn, this would lead to duplicated tests as well?
 impl Sub for Vec2 {
     type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Vec2 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
+impl Sub for &Vec2 {
+    type Output = Vec2;
 
     fn sub(self, rhs: Self) -> Self::Output {
         Vec2 {
@@ -86,7 +99,6 @@ impl Mul<f64> for &Vec2 {
         }
     }
 }
-
 
 impl PartialEq for Vec2 {
     fn eq(&self, other: &Self) -> bool {
