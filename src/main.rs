@@ -34,6 +34,12 @@ fn main() {
     let context: Context = unsafe { softbuffer::Context::new(&window) }.unwrap();
     let surface: Surface = unsafe { softbuffer::Surface::new(&context, &window).unwrap() };
     let mut renderer = Renderer::new(surface);
+    let (width, height) = {
+        let size = window.inner_size();
+        (size.width, size.height)
+    };
+
+    renderer.resize(width, height);
 
     event_loop.run(move |event, _, control_flow| {
         match event {
@@ -44,8 +50,6 @@ fn main() {
                 };
 
                 renderer.resize(width, height);
-                renderer.write();
-                renderer.present();
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
@@ -53,7 +57,10 @@ fn main() {
             } if window_id == window.id() => {
                 *control_flow = ControlFlow::Exit
             },
-            _ => ()
+            _ => {
+                renderer.write();
+                renderer.present();
+            }
         }
     });
 }
