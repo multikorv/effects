@@ -1,6 +1,6 @@
 use crate::common::{vector::Vec2, color::Color};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Ball {
     pub position: Vec2,
     pub radius: u32,

@@ -2,6 +2,7 @@ mod metaball;
 mod common;
 mod rendering;
 
+use metaball::state::State;
 use rendering::renderer::Renderer;
 
 use softbuffer::{
@@ -39,6 +40,8 @@ fn main() {
         (size.width, size.height)
     };
 
+    let mut ball_state = State::new();
+
     renderer.resize(width, height);
 
     event_loop.run(move |event, _, control_flow| {
@@ -58,7 +61,8 @@ fn main() {
                 *control_flow = ControlFlow::Exit
             },
             _ => {
-                renderer.write();
+                ball_state.tick();
+                renderer.metaballs_write(&ball_state);
                 renderer.present();
             }
         }

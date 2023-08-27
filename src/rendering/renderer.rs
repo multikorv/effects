@@ -1,6 +1,7 @@
-use crate::common::color::Color;
+use crate::common::color::{Color, self};
 use crate::metaball::ball::Ball;
 use crate::common::vector::{Vec2, self};
+use crate::metaball::state::State;
 
 use std::num::NonZeroU32;
 use softbuffer::Surface;
@@ -8,7 +9,7 @@ use softbuffer::Surface;
 pub struct Renderer {
     surface: Surface,
     width: u32,
-    height: u32
+    height: u32,
 }
 
 // Should probably split into something threaded or yield to a certain frame count
@@ -19,12 +20,6 @@ impl Renderer {
             width: 0,
             height: 0,
         }
-    }
-
-    pub fn write(&mut self) {
-        // TODO: Add actual meta ball rendering
-        //self.debug_write();
-        self.metaballs_write();
     }
 
     pub fn present(&mut self) {
@@ -45,51 +40,52 @@ impl Renderer {
         .expect("Could not resize surface");
     }
 
-    // TODO: Messy casting, read up on and/or fix with assumptions
-    fn metaballs_write(&mut self) {
-        let width:f64 = self.width.into();
-        let height:f64 = self.height.into();
-        let ball: Ball = Ball::new (
-            Vec2::new(width/2.0, height/2.0),
-            200,
-            Default::default()
-        );
+    pub fn metaballs_write(&mut self, state: &State) {
+        self.clear_buffer();
 
-        let mut t1: f64 = (ball.radius) as f64;
-        let mut x: f64 = ball.radius as f64;
-        let mut y: f64 = 0.0;
+        for ball in state.balls.iter() {
+            let mut t1: f64 = ball.radius as f64;
+            let mut x: f64 = ball.radius as f64;
+            let mut y: f64 = 0.0;
 
-        const SECTOR_INTERVAL_SIZE: i32 = 5;
-        let mut sector_render_counter = 0;
-        while x >= y {
-            // Emulate a dotted circle
-            if sector_render_counter % SECTOR_INTERVAL_SIZE == 0 {
-                for pixel in Renderer::get_mirror_points_for_octant(&Vec2::new(x, y)) {
-                    const INCREMENT: f64 = 2.0;
-                    let mut trace_offset: f64 = 0.0;
+            const SECTOR_INTERVAL_SIZE: i32 = 10;
+            let mut sector_render_counter = 0;
+            while x >= y {
+                // Emulate a dotted circle
+                if sector_render_counter % SECTOR_INTERVAL_SIZE == 0 {
+                    for pixel in Renderer::get_mirror_points_for_octant(&Vec2::new(x, y)) {
+                        const INCREMENT: f64 = 2.0;
+                        let mut trace_offset: f64 = 0.0;
 
-                    while trace_offset <= ball.radius.into() {
-                        let nearness_to_circle_edge = trace_offset/(ball.radius as f64);
-                        let interpolated = vector::lerp(&(&pixel + &ball.position), &ball.position, nearness_to_circle_edge);
-                        self.write_color(
-                            interpolated.x.round() as u32,
-                            interpolated.y.round() as u32,
-                            &ball.color
-                        );
+                        const SEGMENT_INTERVAL_SIZE: i32 = 3;
+                        let mut segment_render_counter = 0;
 
-                        trace_offset += INCREMENT
+                        while trace_offset <= ball.radius.into() {
+                            if segment_render_counter % SEGMENT_INTERVAL_SIZE == 0 {
+                                let nearness_to_circle_edge = trace_offset/(ball.radius as f64);
+                                let interpolated = vector::lerp(&(pixel + ball.position), &ball.position, nearness_to_circle_edge);
+                                self.write_color(
+                                    interpolated.x.round() as u32,
+                                    interpolated.y.round() as u32,
+                                    &ball.color
+                                );
+                            }
+
+                            segment_render_counter += 1;
+                            trace_offset += INCREMENT
+                        }
                     }
                 }
-            }
 
-            sector_render_counter += 1;
+                sector_render_counter += 1;
 
-            y += 1.0;
-            t1 += y;
-            let t2: f64 = t1 - x;
-            if t2 >= 0.0 {
-                t1 = t2;
-                x -= 1.0;
+                y += 1.0;
+                t1 += y;
+                let t2: f64 = t1 - x;
+                if t2 >= 0.0 {
+                    t1 = t2;
+                    x -= 1.0;
+                }
             }
         }
     }
@@ -112,32 +108,35 @@ impl Renderer {
     fn write_color(&mut self, x: u32, y: u32, color: &Color) {
         let index = self.convert_coordinates_to_buffer_index(x, y);
 
-        let mut buffer = self.surface
-            .buffer_mut()
-            .expect("Could not get mutable surface buffer");
+        // Cull anything outside of the buffer, since that will not appear on screen
+        if index > self.get_buffer_max_index() { return };
+
+        let mut buffer = self.get_buffer();
 
         buffer[index] = color.into();
+    }
+
+    fn get_buffer_max_index(&mut self) -> usize {
+        self.get_buffer_length() - 1
+    }
+
+    fn get_buffer_length(&mut self) -> usize {
+        self.get_buffer().len()
     }
 
     fn convert_coordinates_to_buffer_index(&self, x: u32, y: u32) -> usize {
         (y * self.width + x) as usize
     }
 
-    fn debug_write(&mut self) {
-        for index in 0..(self.width * self.height) {
-            let x = index % self.width;
-            let y = index / self.width;
-
-            self.write_color(x, y, &Renderer::debug_color_for(x, y));
-        }
+    fn get_buffer(&mut self) -> softbuffer::Buffer {
+        self.surface
+            .buffer_mut()
+            .expect("Could not get mutable surface buffer")
     }
 
-    fn debug_color_for(x: u32, y: u32) -> Color {
-        let red: u8 = (x % 255) as u8;
-        let green = (y % 255) as u8;
-        let blue = (x + y % 255) as u8;
-
-        Color::new(red, green, blue)
+    fn clear_buffer(&mut self) {
+        self.get_buffer()
+            .iter_mut()
+            .for_each(|b| *b = 0);
     }
-
 }
