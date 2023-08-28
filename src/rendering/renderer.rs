@@ -1,6 +1,8 @@
-use crate::common::color::{Color, self};
-use crate::metaball::ball::Ball;
-use crate::common::vector::{Vec2, self};
+use crate::common::color::Color;
+use crate::common::vector::{
+    Vec2,
+    self
+};
 use crate::metaball::state::State;
 
 use std::num::NonZeroU32;

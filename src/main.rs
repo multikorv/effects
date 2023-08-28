@@ -52,7 +52,12 @@ fn main() {
                     (size.width, size.height)
                 };
 
+                ball_state.tick();
+
                 renderer.resize(width, height);
+
+                renderer.metaballs_write(&ball_state);
+                renderer.present();
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
@@ -60,11 +65,10 @@ fn main() {
             } if window_id == window.id() => {
                 *control_flow = ControlFlow::Exit
             },
-            _ => {
-                ball_state.tick();
-                renderer.metaballs_write(&ball_state);
-                renderer.present();
-            }
+            Event::MainEventsCleared => {
+                window.request_redraw();
+            },
+            _ => {}
         }
     });
 }
