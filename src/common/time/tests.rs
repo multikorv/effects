@@ -32,17 +32,16 @@ fn given_tick_is_called_once_when_checking_delta_time_then_delta_time_should_be_
 fn given_tick_is_called_twice_when_checking_delta_time_then_delta_time_should_be_smaller_than_passed() {
     let mut timer: Time = Time::new();
 
-    std::thread::sleep(Duration::from_millis(1));
+    std::thread::sleep(Duration::from_micros(1));
     timer.tick();
 
-
-    std::thread::sleep(Duration::from_millis(1));
+    std::thread::sleep(Duration::from_micros(1));
     timer.tick();
 
     assert!(
-        timer.delta() < timer.elapsed(),
+        timer.delta < timer.elapsed,
         "Expected delta time {} microseconds to be lower than elapsed {} microseconds",
-        timer.delta().as_micros(),
-        timer.elapsed().as_micros()
+        timer.delta.as_micros(),
+        timer.elapsed.as_micros()
     )
 }

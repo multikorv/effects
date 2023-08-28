@@ -4,8 +4,8 @@ mod tests;
 use std::time::{Instant, Duration};
 
 pub struct Time {
-    delta: Duration,
-    elapsed: Duration,
+    pub delta: Duration,
+    pub elapsed: Duration,
     last_update: Instant
 }
 
@@ -25,13 +25,5 @@ impl Time {
         self.delta = now - self.last_update;
         self.last_update = now;
         self.elapsed += self.delta;
-    }
-
-    pub fn elapsed(&self) -> Duration {
-        self.elapsed.clone()
-    }
-
-    pub fn delta(&self) -> Duration {
-        self.delta.clone()
     }
 }
