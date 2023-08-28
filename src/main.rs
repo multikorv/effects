@@ -2,6 +2,7 @@ mod metaball;
 mod common;
 mod rendering;
 
+use common::time::Time;
 use metaball::state::State;
 use rendering::renderer::Renderer;
 
@@ -40,6 +41,8 @@ fn main() {
         (size.width, size.height)
     };
 
+    let mut time = Time::new();
+
     let mut ball_state = State::new();
 
     renderer.resize(width, height);
@@ -51,12 +54,13 @@ fn main() {
                     let size = window.inner_size();
                     (size.width, size.height)
                 };
-
-                ball_state.tick();
-
                 renderer.resize(width, height);
 
+                time.tick();
+                ball_state.tick(&time);
+
                 renderer.metaballs_write(&ball_state);
+
                 renderer.present();
             }
             Event::WindowEvent {
