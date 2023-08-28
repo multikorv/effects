@@ -3,7 +3,7 @@ use crate::{
     common::{
         vector::Vec2,
         color::{
-            self
+            self, Color
         },
         time::Time
     }
@@ -17,8 +17,8 @@ impl State {
     pub fn new() -> Self {
         State {
             balls: vec![
-                Ball::new(Vec2::new(300.0, 300.0), 100, color::RED),
-                Ball::new(Vec2::new(500.0, 200.0), 90, color::WHITE)
+                Ball::new(Vec2::new(300.0, 300.0), 100, Color::new(52, 164, 235)),
+                Ball::new(Vec2::new(500.0, 200.0), 90, Color::new(135, 64, 38))
             ]
         }
     }
