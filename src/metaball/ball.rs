@@ -19,6 +19,14 @@ impl Ball {
     pub fn diameter(&self) -> u32 {
         self.radius * 2
     }
+
+    pub fn edge_pos_for_angle(&self, theta: f64) -> Vec2 {
+        let edge_pos = Vec2::new(
+            self.position.x + self.radius as f64 * f64::cos(theta * (std::f64::consts::PI / 180.0)),
+            self.position.y + self.radius as f64 * f64::sin(theta * (std::f64::consts::PI / 180.0)),
+        );
+        edge_pos
+    }
 }
 
 impl Default for Ball {

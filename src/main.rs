@@ -54,12 +54,13 @@ fn main() {
                     let size = window.inner_size();
                     (size.width, size.height)
                 };
+
                 renderer.resize(width, height);
 
                 time.tick();
                 ball_state.tick(&time);
 
-                renderer.metaballs_write(&ball_state);
+                renderer.metaballs_write(&ball_state, &time);
 
                 renderer.present();
             }
