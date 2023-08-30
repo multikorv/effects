@@ -2,7 +2,7 @@ mod metaball;
 mod common;
 mod rendering;
 
-use common::time::Time;
+use common::{time::Time, vector::Vec2};
 use metaball::state::State;
 use rendering::renderer::Renderer;
 
@@ -43,7 +43,11 @@ fn main() {
 
     let mut time = Time::new();
 
-    let mut ball_state = State::new();
+    let mut ball_state = State::new(
+        Vec2::new(
+            width as f64 / 2.0,
+            height as f64 / 2.0)
+        );
 
     renderer.resize(width, height);
 
@@ -54,8 +58,9 @@ fn main() {
                     let size = window.inner_size();
                     (size.width, size.height)
                 };
-
                 renderer.resize(width, height);
+                ball_state.world_center.x = width as f64 / 2.0;
+                ball_state.world_center.y = height as f64 / 2.0;
 
                 time.tick();
                 ball_state.tick(&time);
