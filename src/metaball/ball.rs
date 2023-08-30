@@ -15,6 +15,10 @@ impl Ball {
             color
         }
     }
+
+    pub fn diameter(&self) -> u32 {
+        self.radius * 2
+    }
 }
 
 impl Default for Ball {
