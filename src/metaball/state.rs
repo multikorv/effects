@@ -1,13 +1,11 @@
 use crate::{
     metaball::ball::Ball,
     common::{
-        vector::Vec2,
+        vector::{Vec2, self},
         color::Color,
         time::Time
     }
 };
-
-use rand::Rng;
 
 pub struct State {
     pub balls: Vec<Ball>,
@@ -18,26 +16,27 @@ impl State {
     pub fn new(world_center: Vec2) -> Self {
         State {
             balls: vec![
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(255, 220, 53)),
-                Ball::new(Vec2::new(0.0, 0.0), 90, Color::new(198, 210, 61)),
-                Ball::new(Vec2::new(0.0, 0.0), 80, Color::new(131, 170, 63)),
-                Ball::new(Vec2::new(0.0, 0.0), 70, Color::new(93, 136, 66)),
-                Ball::new(Vec2::new(0.0, 0.0), 60, Color::new(132, 79, 27)),
-                Ball::new(Vec2::new(0.0, 0.0), 60, Color::new(255, 220, 53)),
-                Ball::new(Vec2::new(0.0, 0.0), 70, Color::new(198, 210, 61)),
-                Ball::new(Vec2::new(0.0, 0.0), 80, Color::new(131, 170, 63)),
-                Ball::new(Vec2::new(0.0, 0.0), 90, Color::new(93, 136, 66)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(25, 220, 63)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(198, 40, 161)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(200, 10, 66)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(235, 215, 245)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(22, 79, 27)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(198, 21, 61)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(43, 35, 63)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(93, 36, 66)),
                 Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(132, 79, 27)),
+                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(25, 42, 93)),
             ],
             world_center
         }
     }
 
     pub fn tick(&mut self, time: &Time) {
-        // TODO: Fix transforms instead
+        self.colorful_spiraly(time);
+    }
 
+    fn colorful_spiraly(&mut self, time: &Time) {
         let mut count = 1.0;
-        let mut rng = rand::thread_rng();
         self.balls
             .iter_mut()
             .for_each(|ball| {
