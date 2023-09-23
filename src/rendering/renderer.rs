@@ -83,7 +83,7 @@ impl Renderer {
                     );
 
                     let mut pixel_dist_to_midpoint = 1.0 - (vector::distance(&interpolated_pixel, &ball.position) / ball.radius as f64);
-                    let mut nearness_to_mid_x = vector::distance(&interpolated_pixel, &Vec2::new(ball.position.x, interpolated_pixel.y)) / ball.radius as f64;
+                    let nearness_to_mid_x = vector::distance(&interpolated_pixel, &Vec2::new(ball.position.x, interpolated_pixel.y)) / ball.radius as f64;
 
                     const BEND_AMP: f64 = 90.0;
                     pixel_dist_to_midpoint *= nearness_to_mid_x;
