@@ -1,7 +1,7 @@
 use crate::{
     metaball::ball::Ball,
     common::{
-        vector::{Vec2, self},
+        vector::Vec2,
         color::Color,
         time::Time
     }
@@ -41,10 +41,12 @@ impl State {
             .iter_mut()
             .for_each(|ball| {
                 let time_passed_seconds = time.elapsed.as_secs_f64();
-                let amp_factor = 1.0 + (count * 0.1);
-                let time_factor = 1.0 + (count * 0.1);
-                ball.position.x = self.world_center.x + 100.0 * amp_factor * f64::cos(time_passed_seconds * time_factor);
-                ball.position.y = self.world_center.y + 100.0 * amp_factor * f64::sin(time_passed_seconds * time_factor);
+                let amp = 100.0 * (1.0 + count * 0.1);
+                let speed = 1.0 + (count * 0.1);
+
+                ball.position.x = self.world_center.x + amp * f64::cos(time_passed_seconds * speed);
+                ball.position.y = self.world_center.y + amp * f64::sin(time_passed_seconds * speed);
+
                 count += 1.0;
             });
     }
