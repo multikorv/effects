@@ -113,3 +113,7 @@ impl Eq for Vec2 {}
 pub fn lerp(p1: &Vec2, p2: &Vec2, t: f64) -> Vec2 {
     (1.0 - t) * p1 + t * p2
 }
+
+pub fn distance(p1: &Vec2, p2: &Vec2) -> f64 {
+    (f64::powi(p2.x - p1.x, 2) + f64::powi(p2.y - p1.y, 2)).sqrt()
+}
