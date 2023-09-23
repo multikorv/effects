@@ -42,10 +42,17 @@ impl State {
             .for_each(|ball| {
                 let time_passed_seconds = time.elapsed.as_secs_f64();
                 let amp = 100.0 * (1.0 + count * 0.1);
-                let speed = 1.0 + (count * 0.1);
+                let speed_variation = 1.0 + (count * 0.1);
 
-                ball.position.x = self.world_center.x + amp * f64::cos(time_passed_seconds * speed);
-                ball.position.y = self.world_center.y + amp * f64::sin(time_passed_seconds * speed);
+                ball.position.x = self.world_center.x + amp * f64::cos(time_passed_seconds * speed_variation);
+                ball.position.y = self.world_center.y + amp * f64::sin(time_passed_seconds * speed_variation);
+
+                const BASE_RADIUS: f64 = 130.0;
+                //let radius_variation = 0.1 * (2.0 + f64::sin(count * 0.1 * time_passed_seconds));
+                let radius_variation = f64::powf(count, 2.0) / 100.0;
+                let normalized_factor = (2.0 + f64::cos(time_passed_seconds * radius_variation))/3.0;
+
+                ball.radius = f64::max(BASE_RADIUS/2.0, BASE_RADIUS * normalized_factor);
 
                 count += 1.0;
             });
