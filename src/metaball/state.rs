@@ -16,16 +16,16 @@ impl State {
     pub fn new(world_center: Vec2) -> Self {
         State {
             balls: vec![
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(25, 220, 63)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(198, 40, 161)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(200, 10, 66)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(235, 215, 245)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(22, 79, 27)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(198, 21, 61)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(43, 35, 63)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(93, 36, 66)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(132, 79, 27)),
-                Ball::new(Vec2::new(0.0, 0.0), 100, Color::new(25, 42, 93)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(25, 220, 63)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(198, 40, 161)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(200, 10, 66)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(235, 215, 245)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(22, 79, 27)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(198, 21, 61)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(43, 35, 63)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(93, 36, 66)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(132, 79, 27)),
+                Ball::new(Vec2::new(0.0, 0.0), 100.0, Color::new(25, 42, 93)),
             ],
             world_center
         }

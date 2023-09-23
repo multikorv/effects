@@ -71,8 +71,8 @@ impl Renderer {
                     _ => 0.0
                 };
 
-                while trace_offset <= (ball.diameter()).into() {
-                    let nearness_to_circle_edge = trace_offset/(ball.diameter() as f64);
+                while trace_offset <= ball.diameter() {
+                    let nearness_to_circle_edge = trace_offset/(ball.diameter());
 
                     // Mirror to other side, interpolate to that
                     let edge_on_opposite_side = Vec2::new(edge.x, edge.y - dist_to_mid*2.0);
