@@ -110,12 +110,8 @@ impl Renderer {
             let mut y: f64 = 0.0;
 
             const SECTOR_INTERVAL_SIZE: i32 = 10;
-
-            //let mut sector_render_counter: i32 = (20.0 * f32::sin(time.elapsed.as_secs_f32())) as i32;
             let mut sector_render_counter: i32 = 3;
 
-            //let offset = time.elapsed.as_secs_f32();
-            //println!("{}", offset);
             while x >= y {
                 for pixel in Renderer::get_mirror_points_for_octant(&Vec2::new(x, y)) {
                     if sector_render_counter % SECTOR_INTERVAL_SIZE == 0 {
@@ -123,29 +119,21 @@ impl Renderer {
                         let mut trace_offset: f64 = 0.0;
 
                         const SEGMENT_INTERVAL_SIZE: i32 = 2;
-                        let mut segment_render_counter = 0;
 
-                        //let offset_pixel = pixel + Vec2::new(offset.into(), 0.0);
                         let offset_pixel = pixel;
                         let transformed_pixel_location = offset_pixel + ball.position;
 
                         while trace_offset <= ball.radius.into() {
-                            //if segment_render_counter % SEGMENT_INTERVAL_SIZE == 0 {
-                                let nearness_to_circle_edge = trace_offset/(ball.radius as f64);
+                            let nearness_to_circle_edge = trace_offset/(ball.radius as f64);
 
-                                // Gave some other result
-                                //let transformed_pixel_location = vector::lerp(&(pixel + ball.position), &ball.position, nearness_to_circle_edge);
+                            let interpolated = vector::lerp(&transformed_pixel_location, &Vec2::new(transformed_pixel_location.x, ball.position.y), nearness_to_circle_edge);
 
-                                let interpolated = vector::lerp(&transformed_pixel_location, &Vec2::new(transformed_pixel_location.x, ball.position.y), nearness_to_circle_edge);
+                            self.write_color(
+                                interpolated.x.round() as u32,
+                                interpolated.y.round() as u32,
+                                &ball.color
+                            );
 
-                                self.write_color(
-                                    interpolated.x.round() as u32,
-                                    interpolated.y.round() as u32,
-                                    &ball.color
-                                );
-                            //}
-
-                            segment_render_counter += 1;
                             trace_offset += INCREMENT
                         }
                     }
